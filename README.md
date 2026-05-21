@@ -389,7 +389,7 @@ The schema is the whole protocol — once an LLM has the labels, relationships, 
 | `Auth failed` | Wrong password | Reset in Neo4j Desktop, update env vars |
 | Graph Studio shows zero nodes | Database empty or wrong database name | Verify in Neo4j Browser: `MATCH (e:Entity) RETURN count(e)` |
 | `ModuleNotFoundError: spacy` | Virtualenv not activated | Re-activate `.venv` and re-run |
-| Windows blocks `.venv` DLLs | Application Control restriction in some folders | Move project out of `Downloads/`, or use system Python |
+| `DLL load failed while importing` on `import spacy` / `sentence_transformers` (Windows) | Smart App Control / Application Control is blocking unsigned DLLs inside the `.venv`. Common in `Downloads\`, `Desktop\`, OneDrive-synced folders, and USB drives. Not a Python-version issue — affects 3.10 / 3.11 / 3.12 equally. | **Easiest:** move the whole project to a trusted folder like `C:\dev\memorytonic\` and recreate the venv there. **Or:** use system Python (skip the venv) so DLLs load from the trusted Python install location. **Or:** install via Conda/Miniforge — its packages are signed and usually pass Smart App Control. |
 
 ---
 
