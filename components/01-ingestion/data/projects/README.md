@@ -2,6 +2,6 @@
 
 Copy of raw source text for each project before extraction.
 
-Source: `C:\Users\ajayd\Downloads\gatorsquare-studio-public-combined\projects\`
+Drop your own raw source text here. Each project gets its own subfolder.
 
 Each subfolder: `{project-name}/script.md`
