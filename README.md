@@ -1,8 +1,43 @@
 # MemoryTonic
 
-> A personal knowledge-graph research tool that discovers connections between documents that no single document contains.
+> **A personal long-term memory for researchers.** Drop in everything you read — papers, earnings calls, lab notes, podcast transcripts, market reports — and MemoryTonic turns it into a queryable knowledge graph you can interrogate for years. No subscription, no cloud, no vendor. Just your existing Claude (or any LLM) doing the thinking, and Neo4j on your laptop doing the remembering.
 
-Feed in raw text (articles, papers, transcripts). MemoryTonic extracts entities, relationships, and causal chains into a Neo4j graph — then surfaces the **bridge entities** that connect documents you'd never have linked manually.
+The problem it solves: **you've read 300 documents this year and you can only recall the last five.** The connections between them — the entity that appeared in three earnings calls and one regulatory filing, the gene mentioned in two unrelated 2023 papers, the policy that quietly enabled a market shift — are lost to you. MemoryTonic finds them.
+
+---
+
+## Who it's for
+
+| If you are a … | You feed it … | You get back … |
+|---|---|---|
+| **Equity researcher** | Earnings transcripts, 10-Ks, broker notes, management interviews, industry reports | A map of which executives, products, suppliers, and policies link companies across your coverage universe. Detect a competitor mentioned in three unrelated calls before consensus catches on. |
+| **PhD student / academic** | Papers from your literature review, conference talks, supervisor's recommendations | Bridge concepts across subfields. Spot the methodology that two papers share without citing each other. Survive the "have you read X" trap. |
+| **Biology / biomed researcher** | PubMed abstracts, lab notebooks, preprints, drug labels | Connect genes, pathways, compounds, and authors across thousands of papers. Surface mechanism-of-action overlaps you'd otherwise miss. |
+| **Policy / geopolitics analyst** | News, think-tank reports, government filings, podcast transcripts | Trace causal chains across countries and decades. See which actors recur. |
+| **Builder / founder** | Customer interviews, competitor teardowns, podcast transcripts, YC writeups | Build a private "second brain" of your market that compounds with every conversation. |
+| **Student** | Lecture transcripts, textbook chapters, study notes | Long-term memory across semesters. Find every place a concept showed up before the exam. |
+
+Anything text-shaped works. The schema is domain-neutral on purpose (14 ontological entity categories — Person, Organization, System, Process, Technology, Law, …).
+
+---
+
+## Why this exists
+
+**Three honest pitches:**
+
+1. **No subscription.** Notion AI, Mem, Reflect, Recall — all charge $10–30 / month forever. MemoryTonic costs $0. Your Claude / ChatGPT / Gemini subscription you already pay for does the heavy lifting; this repo is the scaffolding.
+2. **Your data stays on your laptop.** Neo4j runs locally. The extracted graph is `.json` files in a folder you own. You can back it up, share it, version it, delete it. No "export to CSV" buttons that strip half your structure.
+3. **It uses real graph science, not vibes.** PageRank tells you which entities matter most across your corpus. Betweenness Centrality finds the *bridges* between knowledge clusters. Node Similarity surfaces analogues you didn't know existed. spaCy NER and BERT 384-d embeddings under the hood. This is the same Graph Data Science stack used by Lyft, NASA, and biotech research labs — wired up for one person.
+
+---
+
+## What it actually does
+
+Feed in raw text. MemoryTonic extracts **entities** (people, organizations, concepts, …), **relationships** (with evidence quotes from the source), and **causal chains** into Neo4j. Then it surfaces the **bridge entities** — the ones that appear across multiple documents in your library — which are almost always the insights you'd otherwise miss.
+
+Two ways to query:
+- **Visually** — interactive force-directed graph (React + react-force-graph-2d).
+- **In chat** — point Claude Desktop at your Neo4j with one config line and ask plain-English questions. Claude writes the Cypher, runs it, and synthesizes the answer. See *Query the graph through Claude* below.
 
 Everything runs **locally**. Your data stays on your machine.
 
