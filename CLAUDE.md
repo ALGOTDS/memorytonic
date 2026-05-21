@@ -4,6 +4,25 @@ Project guide for Claude (and any other LLM agent) working inside this repositor
 
 ---
 
+## If the user just cloned this repo and asked for help
+
+The most common opening message will be some variant of *"I just cloned this, walk me through setup"* or *"help me get this running."* Treat that as your cue to run the **first-time onboarding playbook**:
+
+1. **Detect the environment.** Check OS (`uname -a` / `$env:OS`), Python (`python --version`), Node (`node --version`), and whether Neo4j is reachable (`curl -s -u neo4j:memorytonic http://localhost:7474` returns a JSON banner if it's up). Report what you found in a short table.
+2. **Surface the gaps.** If Neo4j is missing → walk the user through Neo4j Desktop install (point at README §1, Option A or B). If Python or Node is missing → tell them to install the right one for their OS and pause. Do not try to install language runtimes yourself.
+3. **Bootstrap the schema** once Neo4j is up: `python neo4j/bootstrap.py` from `components/01-ingestion/`. Verify with `validate_schema.py`.
+4. **Set up the Python venv.** From `components/01-ingestion/nlp/`, create `.venv`, activate it, `pip install -r requirements.txt`, then `python setup-nlp.py`. **Watch for the Windows AppControl trap** — if the user is in `Downloads\` or `Desktop\`, warn them and offer to help move the project.
+5. **Install Node deps** for both `02-graph-studio` and `03-frontend` (`npm install` in each).
+6. **Write `.env` files** by copying each `.env.example`. Only touch passwords if the user explicitly said they're not using the default.
+7. **Smoke-test the connection.** From one of the UIs, `npm run dev`, open the Settings page — it has a "Test Neo4j connection" button.
+8. **Hand off to the research workflow.** Tell them: *"You're set up. Next time you have a document to add, drop it in `data/projects/<name>/script.md` and tell me — I'll walk you through extraction."*
+
+**Conversational tone, not a wall of commands.** Run one step, show the output, ask before moving on. Researchers are your primary audience and most of them are not Bash-fluent. Pause and explain when a step affects their machine.
+
+**If something fails:** check the README §Troubleshooting table before guessing. Most failures are one of: wrong database name (`memorytonic` vs `neo4j` default), GDS plugin not installed, Windows DLL/AppControl blocking the venv, or `cypher-shell` not on PATH.
+
+---
+
 ## What this repo is
 
 **MemoryTonic** — a personal knowledge-graph research tool. Users feed in raw text (articles, papers, YouTube transcripts). An LLM (you) extracts entities, relationships, and causal chains into Neo4j. Two React UIs let users explore the graph visually.

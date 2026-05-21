@@ -59,6 +59,27 @@ The three components are independent. Ingestion writes to Neo4j over HTTP; Graph
 
 ---
 
+## Quickstart — let Claude set it up for you (recommended)
+
+If you have **Claude Code** or **Claude Desktop**, you do not need to read the rest of this README to get running. Do this:
+
+```bash
+git clone https://github.com/ALGOTDS/memorytonic.git
+cd memorytonic
+```
+
+Then point Claude at the folder and say something like:
+
+> *"I just cloned MemoryTonic. Read CLAUDE.md and walk me through setting it up on this machine — Neo4j, Python, the UIs. Ask me questions when you need to."*
+
+Claude reads [`CLAUDE.md`](CLAUDE.md) automatically — it has the full schema, every script's role, every locked decision, the troubleshooting traps, and four ways to query the graph. Claude will check what you already have installed, install what's missing, configure the env vars, run the schema bootstrap, and start the dev servers. The whole onboarding becomes a conversation, not a checklist.
+
+Once you're up and running, you can use Claude the same way for the actual research work: *"I just dropped a PDF in `data/projects/foo/script.md`. Extract it for me and tell me which entities already exist in my graph."*
+
+If you don't use Claude (or prefer manual control), the rest of this README walks through every step by hand.
+
+---
+
 ## Prerequisites
 
 | Tool        | Version   | Why                                                 |
