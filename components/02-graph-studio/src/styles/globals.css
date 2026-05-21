@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+/*
+ * MemoryTonic Graph Studio — Dark Theme
+ * Source of truth: DESIGN-SPEC.md Section 16 (Color System)
+ *
+ * Background:    #0a0a0f  (near-black)
+ * Surface:       #141420  (panels, cards)
+ * Surface hover: #1a1a2e  (hover states)
+ * Border:        #2a2a3e  (subtle borders)
+ * Text primary:  #e4e4e7  (zinc-200)
+ * Text secondary:#a1a1aa  (zinc-400)
+ * Text muted:    #71717a  (zinc-500)
+ * Accent:        #60A5FA  (blue — selection, focus)
+ * Warning:       #FBBF24  (amber — search highlight)
+ * Error:         #EF4444  (red)
+ */
+
+:root {
+  /* ── Base Palette ─────────────────────────────────── */
+  --bg: #0a0a0f;
+  --surface: #141420;
+  --surface-hover: #1a1a2e;
+  --surface-raised: #181824;
+  --border: #2a2a3e;
+  --border-subtle: #1e1e30;
+
+  /* ── Text ─────────────────────────────────────────── */
+  --text-primary: #e4e4e7;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+
+  /* ── Accents ──────────────────────────────────────── */
+  --accent: #60A5FA;
+  --accent-dim: rgba(96, 165, 250, 0.08);
+  --warning: #FBBF24;
+  --error: #EF4444;
+  --success: #4ADE80;
+
+  /* ── Radii (portable to Component 03) ──────────────── */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+/* Base reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Interactive Element Transitions ──────────────────── */
+button, a {
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+/* Custom scrollbar — thin, dark, unobtrusive */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Selection highlight */
+::selection {
+  background: rgba(96, 165, 250, 0.3);
+  color: var(--text-primary);
+}
+
+/* Focus ring for accessibility */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

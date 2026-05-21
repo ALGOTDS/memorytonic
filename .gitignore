@@ -1,0 +1,53 @@
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Build / caches
+.vite/
+.cache/
+
+# IDE / tool configs
+.idea/
+.vscode/
+.claude/
+.serena/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Neo4j (if anyone drops a local data dir)
+neo4j-data/
+
+# Pipeline scratch
+components/01-ingestion/data/temp/
+components/01-ingestion/data/exports/
+
+# User-generated knowledge (the repo ships empty — users add their own)
+components/01-ingestion/data/projects/*/
+components/01-ingestion/data/sources/*/
+components/01-ingestion/data/extracted/*/
+!components/01-ingestion/data/*/README.md
+
+# YouTube srts user data
+getting youtube srts/data/
+getting youtube srts/transcripts/
