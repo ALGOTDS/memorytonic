@@ -167,27 +167,86 @@ Open the Frontend first — that's the front door. It embeds Graph Studio on the
 
 ### Add your own knowledge
 
-The graph starts empty. To add a document:
+The graph starts empty. Here is the full pipeline for adding one document.
 
-1. **Prepare the source.** Drop raw text into `components/01-ingestion/data/projects/<project-name>/script.md`.
-2. **Run extraction.** This step uses an LLM (Claude, GPT, or any model that can follow the skills in `components/01-ingestion/skills/`). The output is a set of JSON artifacts in `data/extracted/<project-name>/`. Read `components/01-ingestion/README.md` for the full 6-step pipeline.
-3. **Validate.**
-   ```bash
-   python neo4j/validate_project.py data/extracted/<project-name>
-   ```
-4. **Upload.**
-   ```bash
-   python neo4j/upload.py data/extracted/<project-name>
-   ```
-5. **Compute graph metrics** (PageRank, Betweenness, Node Similarity):
-   ```bash
-   python neo4j/gds.py
-   ```
-6. **Explore.** Open the Frontend → navigate to your project's collection → click into the graph.
+#### Step 1 — Drop the source
 
-### Pulling YouTube transcripts (optional)
+```
+components/01-ingestion/data/projects/my-project-name/script.md
+```
 
-If your source material is video, see [`getting youtube srts/README.md`](getting%20youtube%20srts/README.md) — a small Python toolkit (built on `yt-dlp`) that pulls every video and transcript from any YouTube channel into clean CSVs and `.txt` files. No API key required.
+Use kebab-case for the folder name. Anything inside the folder is fine; the LLM agent in the next step will read `script.md` (or whatever you point it at).
+
+#### Step 2 — Run extraction (with an LLM)
+
+This is the only non-scripted step. You give the source text to an LLM together with the extraction protocol, and it produces JSON artifacts.
+
+1. Open a fresh chat with **Claude**, **ChatGPT**, **Gemini**, or any LLM that can follow a long markdown protocol and emit JSON.
+2. Paste the contents of [`components/01-ingestion/skills/extraction-pipeline-skill.md`](components/01-ingestion/skills/extraction-pipeline-skill.md) as the first message. (This is the "constitution" — it tells the LLM the 6-step pipeline, the quality bar, the schema, and the traps.)
+3. Paste your source text from `script.md`.
+4. The LLM walks through the steps and produces these artifacts (save each one as the LLM completes it):
+   ```
+   data/extracted/my-project-name/
+     ├── 01_html.html             ← formatted dark-theme HTML
+     ├── 02_placement.json        ← directory + collection assignment
+     ├── 03_nlp_entities.json     ← (you'll generate this with the Python script below)
+     ├── 04_all_entities.json     ← entities + temporal phases
+     ├── 05_embeddings.json       ← (you'll generate this with the Python script below)
+     └── 06_extraction.json       ← summary, narrative_flow, relationships, causal chains
+   ```
+5. For the two scripted artifacts (NLP + embeddings), run:
+   ```bash
+   cd components/01-ingestion
+   python nlp/preprocess.py data/projects/my-project-name/script.md \
+       > data/extracted/my-project-name/03_nlp_entities.json
+
+   python nlp/embed.py data/extracted/my-project-name/
+   ```
+
+For the full quality bar and pass/fail examples, see [`components/01-ingestion/skills/`](components/01-ingestion/skills/) — the README there is the map.
+
+#### Step 3 — Validate
+
+```bash
+cd components/01-ingestion
+python neo4j/validate_project.py data/extracted/my-project-name
+```
+
+This applies ~30 structural and content rules. If anything fails, fix the JSON and re-run.
+
+#### Step 4 — Upload
+
+```bash
+python neo4j/upload.py data/extracted/my-project-name
+```
+
+Writes nodes, relationships, and embeddings into Neo4j.
+
+#### Step 5 — Compute graph metrics
+
+```bash
+python neo4j/gds.py
+```
+
+PageRank, Betweenness Centrality, Node Similarity. Stored as node properties for the UI to consume.
+
+#### Step 6 — Explore
+
+Open the Frontend (`http://localhost:5174`), navigate to your project's collection, click into the graph. Bridge entities that connect this document to others in the same collection are highlighted with gold/silver/bronze rings.
+
+#### Bonus — Source material from YouTube
+
+If you want to feed in video content, see [`getting youtube srts/README.md`](getting%20youtube%20srts/README.md). It's a small `yt-dlp`-based toolkit (no API key required) that pulls every video + transcript from any YouTube channel and writes them as `.txt` files. Drop the resulting `.txt` into `components/01-ingestion/data/projects/<name>/script.md` and continue from Step 2 above.
+
+#### Useful maintenance scripts
+
+| Script | What it does |
+|--------|--------------|
+| `neo4j/bootstrap.py` | Create/upgrade schema (constraints, indexes, default directories). Idempotent. |
+| `neo4j/validate_schema.py` | Verify the live schema matches what the scripts expect. |
+| `neo4j/delete_project.py <name>` | Cascade-delete a project from Neo4j and the filesystem. `--dry-run` available. |
+| `neo4j/export_collection.py <name>` | Export a collection as a portable ZIP (`graph.json` + HTML + embeddings). |
+| `neo4j/import_collection.py <zip>` | Import a collection ZIP from another MemoryTonic install. |
 
 ---
 
