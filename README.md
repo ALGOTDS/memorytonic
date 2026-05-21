@@ -295,6 +295,56 @@ For the complete schema and the rationale behind it, see:
 
 ---
 
+## Query the graph through Claude (or any LLM)
+
+The two UIs are one way in. The other is just talking to Claude.
+
+Once your graph has data in it, you can ask questions like *"which entities bridge the most documents in my Finance collection?"* or *"trace the causal chain from sanctions to currency devaluation,"* and have Claude write and run the Cypher for you. Three setups, pick whichever fits your workflow:
+
+### Option 1 — Claude Desktop + Neo4j MCP server (most polished)
+
+There's a community MCP server that exposes Neo4j to Claude Desktop:
+
+```bash
+pip install mcp-neo4j-cypher
+```
+
+Edit your Claude Desktop config:
+
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "neo4j": {
+      "command": "python",
+      "args": ["-m", "mcp_neo4j_cypher"],
+      "env": {
+        "NEO4J_URI": "bolt://localhost:7687",
+        "NEO4J_USERNAME": "neo4j",
+        "NEO4J_PASSWORD": "memorytonic",
+        "NEO4J_DATABASE": "memorytonic"
+      }
+    }
+  }
+}
+```
+
+Restart Claude Desktop. You can now ask things like *"show me the gold-tier bridge entities sorted by PageRank"* and Claude will write the Cypher, run it, and explain the results.
+
+### Option 2 — Claude Code (or any terminal-using agent)
+
+If you use Claude Code, point it at this repository and Claude reads [`CLAUDE.md`](CLAUDE.md) automatically — that file documents the schema, the locked vocabularies, and shells out to `cypher-shell` or the bundled Python `db.py` helper to run queries on your behalf.
+
+### Option 3 — Paste the schema into any chat
+
+Even without an MCP server, you can copy the **Graph schema** section above (or all of [`CLAUDE.md`](CLAUDE.md)) into a fresh Claude/ChatGPT/Gemini chat, describe your question, and ask the LLM to write the Cypher. Paste the query into Neo4j Browser (`http://localhost:7474`), paste the result back to the LLM, and it'll synthesize an answer.
+
+The schema is the whole protocol — once an LLM has the labels, relationships, and the 14/15 locked vocabularies, it can reason about your graph as well as it reasons about code.
+
+---
+
 ## Troubleshooting
 
 | Symptom | Likely cause | Fix |
