@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Setup help (Neo4j / Python / Node)
+    url: https://github.com/ALGOTDS/memorytonic#troubleshooting
+    about: Check the troubleshooting table in the README before opening an issue.
+  - name: How to extract a document
+    url: https://github.com/ALGOTDS/memorytonic/blob/main/components/01-ingestion/skills/extraction-pipeline-skill.md
+    about: The zero-context agent guide for the 6-step extraction pipeline.
